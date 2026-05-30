@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Aura by Chosen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap');
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #7A6030;
+    --deep: #0A0A0F;
+    --surface: #12121A;
+    --card: #1A1A26;
+    --card2: #1F1F2E;
+    --violet: #3D1F6E;
+    --violet-light: #6B3FA0;
+    --violet-glow: rgba(107,63,160,0.25);
+    --text: #F0EBE0;
+    --text-muted: #9A9080;
+    --success: #4CAF7D;
+    --error: #E05A5A;
+    --font-body: Arial, sans-serif;
+    --font-title: Arial, Helvetica, sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--deep);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-aura {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61,31,110,0.45) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                var(--deep);
+  }
+  .bg-aura::after {
+    content:''; position:absolute; inset:0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A84C' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: fixed; inset: 0; z-index: 10;
+    display: none; flex-direction: column;
+    overflow-y: auto; overflow-x: hidden;
+    padding: 0 0 80px 0;
+    transition: opacity 0.35s ease;
+  }
+  .screen.active { display: flex; }
+
+  /* ── SPLASH ── */
+  #splash {
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 18px; padding: 40px;
+    background: var(--deep); z-index: 100;
+  }
+  .splash-ring {
+    width: 110px; height: 110px; border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(var(--deep), var(--deep)) padding-box,
+                linear-gradient(135deg, var(--gold), var(--violet-light)) border-box;
+    display: flex; align-items: center; justify-content: center;
+    animation: pulse-ring 2s ease-in-out infinite;
+    position: relative;
+  }
+  .splash-ring::before {
+    content:''; position:absolute; inset:-8px; border-radius:50%;
+    border: 1px solid rgba(201,168,76,0.15);
+    animation: pulse-ring 2s ease-in-out infinite 0.5s;
+  }
+  .splash-logo { font-family: var(--font-title); font-size: 28px; font-weight: 700; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
+  .splash-sub { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.05);opacity:0.8} }
+
+  /* ── AUTH ── */
+  #auth {
+    padding: 0;
+    background: var(--deep);
+    justify-content: flex-start;
+  }
+  .auth-hero {
+    position: relative; height: 280px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    background: linear-gradient(180deg, rgba(61,31,110,0.6) 0%, var(--deep) 100%);
+  }
+  .auth-hero-glow {
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 80% 80% at 50% 30%, rgba(107,63,160,0.4) 0%, transparent 70%);
+  }
+  .auth-hero h1 {
+    font-family: var(--font-title); font-size: 36px; font-weight: 700;
+    color: var(--gold); letter-spacing: 4px; text-transform: uppercase;
+    position: relative; z-index: 1; text-align: center;
+  }
+  .auth-hero p {
+    font-size: 13px; color: var(--text-muted); letter-spacing: 3px;
+    text-transform: uppercase; position: relative; z-index: 1; margin-top: 6px;
+  }
+  .auth-form { padding: 32px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .lang-selector-bar {
+    display: flex; gap: 8px; justify-content: center; padding: 16px 24px 0;
+  }
+  .lang-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gold-dim);
+    background: transparent; color: var(--text-muted); font-size: 13px; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .lang-btn.active { background: var(--gold); color: var(--deep); border-color: var(--gold); font-weight: 700; }
+
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+  .input-group label { font-size: 13px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .input-group input, .input-group select {
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    border: 1px solid rgba(201,168,76,0.2); background: var(--card);
+    color: var(--text); font-family: var(--font-body); font-size: 16px;
+    outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .input-group input:focus, .input-group select:focus { border-color: var(--gold); }
+  .input-group select { cursor: pointer; }
+
+  .btn-primary {
+    padding: 16px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    background-size: 200% 100%; background-position: 0% 0%;
+    color: var(--deep); font-family: var(--font-title); font-size: 16px; font-weight: 700;
+    border: none; cursor: pointer; letter-spacing: 2px; text-transform: uppercase;
+    transition: all 0.3s; box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+  }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-primary:hover { background-position: 100% 0%; box-shadow: 0 6px 28px rgba(201,168,76,0.5); }
+
+  .btn-ghost {
+    padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid rgba(201,168,76,0.3); background: transparent;
+    color: var(--gold); font-family: var(--font-body); font-size: 15px;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+  }
+  .btn-ghost:active { background: rgba(201,168,76,0.08); }
+
+  .auth-divider { text-align: center; color: var(--text-muted); font-size: 13px; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 54px 20px 16px; position: sticky; top: 0; z-index: 50;
+    background: linear-gradient(180deg, var(--deep) 80%, transparent 100%);
+  }
+  .topbar-title { font-family: var(--font-title); font-size: 22px; font-weight: 700; color: var(--gold); letter-spacing: 2px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 2px solid var(--gold); background: var(--violet);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: var(--gold);
+    font-family: var(--font-title);
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+    display: flex; background: rgba(18,18,26,0.95);
+    backdrop-filter: blur(20px); border-top: 1px solid rgba(201,168,76,0.12);
+    padding: 8px 0 20px;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 6px 0; cursor: pointer; transition: all 0.2s;
+    border: none; background: transparent; color: var(--text-muted);
+    font-family: var(--font-body); font-size: 11px; letter-spacing: 0.5px;
+  }
+  .nav-item .nav-icon { font-size: 22px; transition: transform 0.2s; }
+  .nav-item.active { color: var(--gold); }
+  .nav-item.active .nav-icon { transform: scale(1.15); }
+
+  /* ── CARDS ── */
+  .content-pad { padding: 0 20px; }
+
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid rgba(201,168,76,0.1); padding: 20px;
+    margin-bottom: 16px; position: relative; overflow: hidden;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--violet-light), var(--gold));
+    opacity: 0;  transition: opacity 0.3s;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-gold { border-color: rgba(201,168,76,0.3); }
+  .card-gold::before { opacity: 1; }
+
+  /* ── HOME SCREEN ── */
+  .greeting { font-family: var(--font-title); font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .greeting span { color: var(--gold); }
+  .greeting-sub { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+
+  .xp-bar-wrap { margin-bottom: 8px; }
+  .xp-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+  .xp-bar { height: 8px; background: var(--card2); border-radius: 4px; overflow: hidden; }
+  .xp-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--violet-light), var(--gold)); transition: width 1s ease; }
+
+  .level-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 20px;
+    background: rgba(61,31,110,0.4); border: 1px solid var(--violet-light);
+    font-size: 13px; color: var(--violet-light); font-weight: 700; margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: var(--font-title); font-size: 18px; font-weight: 700;
+    color: var(--text); margin: 24px 0 14px; letter-spacing: 1px;
+  }
+  .section-title span { color: var(--gold); }
+
+  .streak-row { display: flex; gap: 10px; margin-bottom: 24px; }
+  .streak-card {
+    flex: 1; background: var(--card); border-radius: var(--radius-sm);
+    border: 1px solid rgba(201,168,76,0.1); padding: 14px 12px; text-align: center;
+  }
+  .streak-val { font-family: var(--font-title); font-size: 26px; font-weight: 700; color: var(--gold); }
+  .streak-lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .exercise-list { display: flex; flex-direction: column; gap: 12px; }
+  .exercise-item {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--card); border-radius: var(--radius-sm);
+    border: 1px solid rgba(201,168,76,0.08); padding: 16px;
+    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .exercise-item:active { transform: scale(0.98); }
+  .exercise-item.locked { opacity: 0.45; }
+  .ex-icon { font-size: 28px; min-width: 44px; text-align: center; }
+  .ex-info { flex: 1; }
+  .ex-name { font-family: var(--font-title); font-size: 17px; font-weight: 700; color: var(--text); }
+  .ex-desc { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .ex-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .ex-badge.new { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .ex-badge.done { background: rgba(76,175,125,0.15); color: var(--success); }
+  .ex-badge.locked { background: rgba(100,100,100,0.15); color: #666; }
+  .ex-arrow { color: var(--gold-dim); font-size: 18px; }
+
+  /* ── EXERCISE SCREEN ── */
+  #exercise { background: var(--deep); }
+  .ex-header {
+    padding: 54px 20px 20px; display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+    background: linear-gradient(180deg, var(--deep) 85%, transparent);
+  }
+  .btn-back {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.3); background: transparent;
+    color: var(--gold); font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ex-header-title { font-family: var(--font-title); font-size: 20px; font-weight: 700; color: var(--text); }
+
+  .ex-body { padding: 0 20px 20px; }
+
+  .mic-area {
+    background: var(--card); border-radius: 20px;
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 32px 20px; text-align: center; margin-bottom: 20px;
+  }
+  .mic-btn {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 2px solid var(--gold); background: var(--violet);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; cursor: pointer; margin: 0 auto 16px;
+    transition: all 0.2s; position: relative;
+    box-shadow: 0 0 30px rgba(201,168,76,0.15);
+  }
+  .mic-btn.recording {
+    animation: mic-pulse 1s ease-in-out infinite;
+    background: rgba(224,90,90,0.2); border-color: var(--error);
+    box-shadow: 0 0 40px rgba(224,90,90,0.3);
+  }
+  @keyframes mic-pulse {
+    0%,100%{box-shadow:0 0 40px rgba(224,90,90,0.3); transform:scale(1)}
+    50%{box-shadow:0 0 60px rgba(224,90,90,0.5); transform:scale(1.05)}
+  }
+  .mic-status { font-size: 15px; color: var(--text-muted); }
+  .mic-timer { font-family: var(--font-title); font-size: 32px; font-weight: 700; color: var(--gold); margin: 8px 0; }
+
+  .wave-container {
+    height: 50px; display: flex; align-items: center; justify-content: center; gap: 3px; margin: 12px 0;
+  }
+  .wave-bar {
+    width: 4px; border-radius: 2px; background: var(--gold);
+    animation: none; transition: height 0.1s;
+  }
+  .wave-bar.active { animation: wave-anim 0.6s ease-in-out infinite; }
+  @keyframes wave-anim {
+    0%,100%{height:6px} 50%{height:36px}
+  }
+  .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.15s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.05s; }
+  .wave-bar:nth-child(6) { animation-delay: 0.25s; }
+  .wave-bar:nth-child(7) { animation-delay: 0.3s; }
+  .wave-bar:nth-child(8) { animation-delay: 0.12s; }
+
+  .prompt-card {
+    background: rgba(61,31,110,0.25); border-radius: var(--radius-sm);
+    border: 1px solid rgba(107,63,160,0.4); padding: 20px; margin-bottom: 16px;
+  }
+  .prompt-label { font-size: 11px; color: var(--violet-light); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .prompt-text { font-size: 18px; color: var(--text); line-height: 1.6; }
+
+  .feedback-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid rgba(201,168,76,0.2); padding: 20px; margin-bottom: 16px;
+    display: none;
+  }
+  .feedback-card.visible { display: block; }
+  .feedback-score {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+  }
+  .score-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-title); font-size: 22px; font-weight: 700; color: var(--gold);
+    flex-shrink: 0;
+  }
+  .feedback-title { font-family: var(--font-title); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .feedback-text { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+  .feedback-tips { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .tip-item { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text-muted); }
+  .tip-item::before { content:'✦'; color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+
+  .tts-btn {
+    display: flex; align-items: center; gap: 10px; padding: 14px 20px;
+    background: rgba(61,31,110,0.3); border: 1px solid var(--violet-light);
+    border-radius: var(--radius-sm); color: var(--violet-light);
+    font-family: var(--font-body); font-size: 15px; cursor: pointer;
+    transition: all 0.2s; width: 100%; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .tts-btn:active { background: rgba(61,31,110,0.5); }
+
+  /* ── EXERCISES CATALOG ── */
+  #exercises .content-pad { padding-top: 8px; }
+  .filter-row { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 12px; scrollbar-width: none; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    padding: 7px 16px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.2);
+    background: transparent; color: var(--text-muted); font-size: 13px; cursor: pointer;
+    white-space: nowrap; font-family: var(--font-body); transition: all 0.2s;
+  }
+  .filter-chip.active { background: var(--gold); color: var(--deep); border-color: var(--gold); font-weight: 700; }
+
+  .ex-grid { display: flex; flex-direction: column; gap: 12px; }
+  .ex-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid rgba(201,168,76,0.1); padding: 20px;
+    cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .ex-card:active { transform: scale(0.98); border-color: rgba(201,168,76,0.3); }
+  .ex-card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .ex-card-icon { font-size: 32px; }
+  .ex-card-title { font-family: var(--font-title); font-size: 18px; font-weight: 700; color: var(--text); }
+  .ex-card-cat { font-size: 12px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
+  .ex-card-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+  .ex-card-footer { display: flex; justify-content: space-between; align-items: center; }
+  .difficulty-dots { display: flex; gap: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--card2); }
+  .dot.filled { background: var(--gold); }
+  .duration-tag { font-size: 12px; color: var(--text-muted); }
+
+  /* ── PROGRESS SCREEN ── */
+  .progress-hero {
+    background: linear-gradient(135deg, rgba(61,31,110,0.4), rgba(201,168,76,0.1));
+    border-radius: var(--radius); border: 1px solid rgba(201,168,76,0.2);
+    padding: 24px; margin-bottom: 20px; text-align: center;
+  }
+  .progress-level { font-family: var(--font-title); font-size: 48px; font-weight: 700; color: var(--gold); }
+  .progress-level-name { font-size: 16px; color: var(--text-muted); margin-top: 4px; letter-spacing: 1px; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: var(--card); border-radius: var(--radius-sm); border: 1px solid rgba(201,168,76,0.1); padding: 16px; }
+  .stat-val { font-family: var(--font-title); font-size: 28px; font-weight: 700; color: var(--gold); }
+  .stat-lbl { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .roadmap { display: flex; flex-direction: column; gap: 0; }
+  .roadmap-item { display: flex; gap: 16px; align-items: flex-start; padding-bottom: 24px; position: relative; }
+  .roadmap-item::before {
+    content:''; position:absolute; left: 19px; top: 40px; bottom: 0;
+    width: 2px; background: linear-gradient(180deg, rgba(201,168,76,0.3), transparent);
+  }
+  .roadmap-item:last-child::before { display: none; }
+  .roadmap-dot {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    border: 2px solid rgba(201,168,76,0.3); background: var(--card);
+  }
+  .roadmap-dot.done { border-color: var(--gold); background: rgba(201,168,76,0.15); }
+  .roadmap-dot.current { border-color: var(--violet-light); background: rgba(107,63,160,0.3); animation: pulse-dot 2s infinite; }
+  @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(107,63,160,0.4)} 50%{box-shadow:0 0 0 8px rgba(107,63,160,0)} }
+  .roadmap-info { flex: 1; padding-top: 8px; }
+  .roadmap-title { font-family: var(--font-title); font-size: 16px; font-weight: 700; color: var(--text); }
+  .roadmap-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── PROFILE SCREEN ── */
+  .profile-hero { text-align: center; padding: 20px 20px 32px; }
+  .profile-avatar {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 3px solid var(--gold); background: var(--violet);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; font-weight: 700; color: var(--gold);
+    font-family: var(--font-title); margin: 0 auto 16px;
+    box-shadow: 0 0 30px rgba(201,168,76,0.2);
+  }
+  .profile-name { font-family: var(--font-title); font-size: 24px; font-weight: 700; color: var(--text); }
+  .profile-title { font-size: 14px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+  .settings-list { display: flex; flex-direction: column; gap: 4px; }
+  .setting-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; background: var(--card); border-radius: var(--radius-sm);
+    cursor: pointer; transition: background 0.2s;
+  }
+  .setting-item:active { background: var(--card2); }
+  .setting-left { display: flex; align-items: center; gap: 14px; }
+  .setting-icon { font-size: 20px; width: 24px; text-align: center; }
+  .setting-label { font-size: 16px; color: var(--text); }
+  .setting-value { font-size: 14px; color: var(--text-muted); }
+  .setting-arrow { color: var(--gold-dim); }
+
+  /* ── TOGGLE ── */
+  .toggle { width: 44px; height: 26px; background: var(--card2); border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s; }
+  .toggle.on { background: var(--gold); }
+  .toggle::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background: white; transition: transform 0.3s; }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px); display: none;
+    align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 24px 24px 0 0;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    padding: 24px 24px 40px; width: 100%; max-height: 80vh; overflow-y: auto;
+    animation: slide-up 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slide-up { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .modal-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: var(--font-title); font-size: 22px; font-weight: 700; color: var(--gold); margin-bottom: 16px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--card2); border: 1px solid rgba(201,168,76,0.3);
+    color: var(--text); padding: 12px 24px; border-radius: 30px;
+    font-size: 14px; z-index: 300; opacity: 0; transition: all 0.3s;
+    white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── UTILS ── */
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .text-gold { color: var(--gold); }
+  .text-muted { color: var(--text-muted); }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mb-16 { margin-bottom: 16px; }
+  .spinner {
+    width: 24px; height: 24px; border: 3px solid rgba(201,168,76,0.2);
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 20px auto;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  .tts-loading { display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text-muted); justify-content:center; padding:10px; }
+
+  /* Language modal */
+  .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .lang-option {
+    padding: 12px; background: var(--card); border-radius: var(--radius-sm);
+    border: 1px solid rgba(201,168,76,0.1); cursor: pointer; text-align: center;
+    font-size: 14px; color: var(--text); transition: all 0.2s;
+  }
+  .lang-option.selected { border-color: var(--gold); background: rgba(201,168,76,0.1); color: var(--gold); }
+  .lang-option .flag { font-size: 22px; display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="bg-aura"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     SPLASH
+═══════════════════════════════════════════════════ -->
+<div class="screen active" id="splash">
+  <div class="splash-ring">
+    <span style="font-size:44px">🔮</span>
+  </div>
+  <div class="splash-logo">AURA</div>
+  <div class="splash-sub">by Chosen</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     AUTH
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="auth">
+  <div class="auth-hero">
+    <div class="auth-hero-glow"></div>
+    <h1>AURA</h1>
+    <p>by Chosen</p>
+  </div>
+  <div class="lang-selector-bar">
+    <button class="lang-btn active" onclick="setAppLang('fr',this)">🇫🇷 FR</button>
+    <button class="lang-btn" onclick="setAppLang('en',this)">🇺🇸 EN</button>
+    <button class="lang-btn" onclick="setAppLang('other',this)">🌍 Autre</button>
+  </div>
+  <div class="auth-form">
+    <div id="auth-welcome" style="font-family:var(--font-title);font-size:22px;font-weight:700;color:var(--text);text-align:center;margin-bottom:8px;">
+      Bienvenue 👋
+    </div>
+    <div style="font-size:15px;color:var(--text-muted);text-align:center;margin-bottom:20px;" id="auth-sub">
+      Commence ton parcours vers l'excellence oratoire
+    </div>
+    <div class="input-group">
+      <label id="lbl-name">Ton prénom</label>
+      <input type="text" id="inp-name" placeholder="ex: Marie" />
+    </div>
+    <div class="input-group">
+      <label id="lbl-email">Email</label>
+      <input type="email" id="inp-email" placeholder="ton@email.com" />
+    </div>
+    <div class="input-group" id="pw-group">
+      <label id="lbl-pw">Mot de passe</label>
+      <input type="password" id="inp-pw" placeholder="••••••••" />
+    </div>
+    <button class="btn-primary" id="btn-signup" onclick="doSignup()">Commencer mon parcours ✦</button>
+    <div class="auth-divider" id="auth-or">— ou —</div>
+    <button class="btn-ghost" id="btn-signin" onclick="switchToSignin()">J'ai déjà un compte</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HOME
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="home">
+  <div class="topbar">
+    <div class="topbar-title">AURA</div>
+    <div class="topbar-right">
+      <button class="btn-ghost" style="padding:6px 12px;font-size:12px;letter-spacing:1px;" onclick="showLangModal()">🌍 <span id="cur-lang-label">FR</span></button>
+      <div class="avatar" id="home-avatar">M</div>
+    </div>
+  </div>
+  <div class="content-pad">
+    <div class="greeting" id="home-greeting">Bonjour, <span id="user-name-home">Champion</span> 👋</div>
+    <div class="greeting-sub" id="home-sub">Prêt à élever ta voix aujourd'hui ?</div>
+
+    <div class="level-badge">⭐ <span id="level-label">Niveau 1 — Débutant</span></div>
+
+    <div class="card card-gold">
+      <div class="xp-label">
+        <span id="xp-label-txt">Progression XP</span>
+        <span id="xp-val">120 / 500 XP</span>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:24%"></div></div>
+    </div>
+
+    <div class="streak-row">
+      <div class="streak-card">
+        <div class="streak-val" id="streak-days">3</div>
+        <div class="streak-lbl" id="lbl-streak">Jours consécutifs</div>
+      </div>
+      <div class="streak-card">
+        <div class="streak-val" id="ex-done-count">7</div>
+        <div class="streak-lbl" id="lbl-ex-done">Exercices faits</div>
+      </div>
+      <div class="streak-card">
+        <div class="streak-val" id="avg-score">72%</div>
+        <div class="streak-lbl" id="lbl-avg">Score moyen</div>
+      </div>
+    </div>
+
+    <div class="section-title" id="home-today-title">Exercices du <span>jour</span></div>
+    <div class="exercise-list" id="daily-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     EXERCISE SESSION
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="exercise">
+  <div class="ex-header">
+    <button class="btn-back" onclick="goBack()">←</button>
+    <div class="ex-header-title" id="ex-session-title">Exercice</div>
+  </div>
+  <div class="ex-body">
+    <div class="prompt-card">
+      <div class="prompt-label" id="lbl-instructions">Instructions</div>
+      <div class="prompt-text" id="ex-prompt-text">Chargement...</div>
+    </div>
+
+    <button class="tts-btn" id="btn-listen" onclick="listenInstructions()">
+      🔊 <span id="lbl-listen-btn">Écouter les instructions</span>
+    </button>
+
+    <div class="mic-area">
+      <div class="mic-timer" id="mic-timer">0:00</div>
+      <div class="wave-container" id="wave">
+        <div class="wave-bar" id="wb1"></div><div class="wave-bar" id="wb2"></div>
+        <div class="wave-bar" id="wb3"></div><div class="wave-bar" id="wb4"></div>
+        <div class="wave-bar" id="wb5"></div><div class="wave-bar" id="wb6"></div>
+        <div class="wave-bar" id="wb7"></div><div class="wave-bar" id="wb8"></div>
+      </div>
+      <button class="mic-btn" id="mic-btn" onclick="toggleRecording()">🎙️</button>
+      <div class="mic-status" id="mic-status">Appuie pour parler</div>
+    </div>
+
+    <div class="feedback-card" id="feedback-card">
+      <div class="feedback-score">
+        <div class="score-circle" id="feedback-score-val">—</div>
+        <div>
+          <div class="feedback-title" id="feedback-title">Analyse en cours...</div>
+          <div class="feedback-text" id="feedback-intro"></div>
+        </div>
+      </div>
+      <div class="feedback-tips" id="feedback-tips"></div>
+    </div>
+
+    <div id="btn-next-wrap" style="display:none">
+      <button class="btn-primary" onclick="nextExercise()">
+        <span id="lbl-next-btn">Exercice suivant ✦</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     EXERCISES CATALOG
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="exercises">
+  <div class="topbar">
+    <div class="topbar-title" id="catalog-title">Exercices</div>
+  </div>
+  <div class="content-pad">
+    <div class="filter-row" id="filter-row"></div>
+    <div class="ex-grid" id="ex-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PROGRESS
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="progress">
+  <div class="topbar">
+    <div class="topbar-title" id="prog-title">Progression</div>
+  </div>
+  <div class="content-pad">
+    <div class="progress-hero">
+      <div class="progress-level">1</div>
+      <div class="progress-level-name" id="prog-level-name">DÉBUTANT</div>
+      <div style="margin-top:16px;">
+        <div class="xp-label"><span id="prog-xp-lbl">XP vers niveau 2</span><span id="prog-xp-val">120/500</span></div>
+        <div class="xp-bar"><div class="xp-fill" style="width:24%"></div></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val">7</div><div class="stat-lbl" id="lbl-total-ex">Exercices</div></div>
+      <div class="stat-card"><div class="stat-val">3</div><div class="stat-lbl" id="lbl-streak-stat">Streak</div></div>
+      <div class="stat-card"><div class="stat-val">72%</div><div class="stat-lbl" id="lbl-avg-stat">Score moyen</div></div>
+      <div class="stat-card"><div class="stat-val">42 min</div><div class="stat-lbl" id="lbl-time-stat">Temps total</div></div>
+    </div>
+
+    <div class="section-title" id="lbl-roadmap-title">Parcours <span>d'excellence</span></div>
+    <div class="roadmap" id="roadmap-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PROFILE
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="profile">
+  <div class="topbar">
+    <div class="topbar-title" id="prof-title">Profil</div>
+  </div>
+  <div class="profile-hero">
+    <div class="profile-avatar" id="prof-avatar">M</div>
+    <div class="profile-name" id="prof-name">Champion</div>
+    <div class="profile-title" id="prof-level-title">Débutant — Niveau 1</div>
+  </div>
+  <div class="content-pad">
+    <div class="section-title" id="lbl-settings">Paramètres</div>
+    <div class="settings-list" id="settings-list"></div>
+    <div style="height:20px"></div>
+    <button class="btn-ghost" style="width:100%;color:var(--error);border-color:rgba(224,90,90,0.3);" onclick="doLogout()" id="btn-logout">
+      Déconnexion
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     BOTTOM NAV
+═══════════════════════════════════════════════════ -->
+<nav class="bottom-nav" id="bottom-nav" style="display:none">
+  <button class="nav-item active" data-screen="home" onclick="switchScreen('home',this)">
+    <span class="nav-icon">🏠</span><span data-key="nav_home">Accueil</span>
+  </button>
+  <button class="nav-item" data-screen="exercises" onclick="switchScreen('exercises',this)">
+    <span class="nav-icon">🎯</span><span data-key="nav_ex">Exercices</span>
+  </button>
+  <button class="nav-item" data-screen="progress" onclick="switchScreen('progress',this)">
+    <span class="nav-icon">📈</span><span data-key="nav_prog">Progression</span>
+  </button>
+  <button class="nav-item" data-screen="profile" onclick="switchScreen('profile',this)">
+    <span class="nav-icon">👤</span><span data-key="nav_prof">Profil</span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="lang-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="lbl-lang-modal-title">Choisir une langue</div>
+    <div class="lang-grid" id="lang-grid"></div>
+    <button class="btn-primary" style="margin-top:20px" onclick="closeLangModal()" id="btn-save-lang">Enregistrer ✦</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════════════════════
+const LANGS = {
+  fr: {
+    auth_welcome: "Bienvenue 👋",
+    auth_sub: "Commence ton parcours vers l'excellence oratoire",
+    lbl_name: "Ton prénom", lbl_email: "Email", lbl_pw: "Mot de passe",
+    btn_signup: "Commencer mon parcours ✦", auth_or: "— ou —",
+    btn_signin: "J'ai déjà un compte",
+    home_greeting: "Bonjour,", home_sub: "Prêt à élever ta voix aujourd'hui ?",
+    level_label: "Niveau 1 — Débutant", xp_label: "Progression XP",
+    streak_days: "Jours consécutifs", ex_done: "Exercices faits", avg_score: "Score moyen",
+    today_title: "Exercices du <span>jour</span>",
+    nav_home: "Accueil", nav_ex: "Exercices", nav_prog: "Progression", nav_prof: "Profil",
+    lbl_instructions: "Instructions", lbl_listen_btn: "Écouter les instructions",
+    tap_to_speak: "Appuie pour parler", recording: "Enregistrement...", stop_rec: "Appuie pour arrêter",
+    analyzing: "Analyse en cours...", next_btn: "Exercice suivant ✦",
+    catalog_title: "Exercices", prog_title: "Progression", prof_title: "Profil",
+    lbl_settings: "Paramètres", btn_logout: "Déconnexion",
+    roadmap_title: "Parcours <span>d'excellence</span>",
+    lbl_total_ex: "Exercices", lbl_streak_stat: "Streak", lbl_avg_stat: "Score moyen", lbl_time_stat: "Temps total",
+    lang_modal_title: "Choisir une langue", btn_save_lang: "Enregistrer ✦",
+    filters: ["Tous","Prononciation","Éloquence","Shadow","Rythme","Confiance"],
+    prog_xp_lbl: "XP vers niveau 2",
+    toast_saved: "Progression sauvegardée ✦",
+    toast_unlocked: "Nouveau niveau débloqué ! 🏆",
+    prof_level_title: "Débutant — Niveau 1",
+  },
+  en: {
+    auth_welcome: "Welcome 👋",
+    auth_sub: "Start your journey to oratory excellence",
+    lbl_name: "Your first name", lbl_email: "Email", lbl_pw: "Password",
+    btn_signup: "Start my journey ✦", auth_or: "— or —",
+    btn_signin: "I already have an account",
+    home_greeting: "Hello,", home_sub: "Ready to elevate your voice today?",
+    level_label: "Level 1 — Beginner", xp_label: "XP Progress",
+    streak_days: "Day streak", ex_done: "Exercises done", avg_score: "Avg score",
+    today_title: "Today's <span>exercises</span>",
+    nav_home: "Home", nav_ex: "Exercises", nav_prog: "Progress", nav_prof: "Profile",
+    lbl_instructions: "Instructions", lbl_listen_btn: "Listen to instructions",
+    tap_to_speak: "Tap to speak", recording: "Recording...", stop_rec: "Tap to stop",
+    analyzing: "Analyzing...", next_btn: "Next exercise ✦",
+    catalog_title: "Exercises", prog_title: "Progress", prof_title: "Profile",
+    lbl_settings: "Settings", btn_logout: "Log out",
+    roadmap_title: "Excellence <span>roadmap</span>",
+    lbl_total_ex: "Exercises", lbl_streak_stat: "Streak", lbl_avg_stat: "Avg score", lbl_time_stat: "Total time",
+    lang_modal_title: "Choose a language", btn_save_lang: "Save ✦",
+    filters: ["All","Pronunciation","Eloquence","Shadow","Rhythm","Confidence"],
+    prog_xp_lbl: "XP to level 2",
+    toast_saved: "Progress saved ✦",
+    toast_unlocked: "New level unlocked! 🏆",
+    prof_level_title: "Beginner — Level 1",
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// EXERCISES DATA
+// ═══════════════════════════════════════════════════════════════
+const EXERCISES = [
+  {
+    id: 1, icon: "🔤", cat_fr: "Prononciation", cat_en: "Pronunciation",
+    name_fr: "Virelangues Fondamentaux", name_en: "Basic Tongue Twisters",
+    desc_fr: "Entraîne ta langue avec des phrases complexes pour améliorer ta diction.",
+    desc_en: "Train your tongue with complex sentences to improve your diction.",
+    difficulty: 1, duration_fr: "5 min", duration_en: "5 min",
+    prompt_fr: "Répète lentement, puis de plus en plus vite : \"Les chaussettes de l'archiduchesse sont-elles sèches ? Archi-sèches.\" Prononce chaque syllabe distinctement.",
+    prompt_en: "Repeat slowly, then faster: \"She sells seashells by the seashore.\" Pronounce each syllable clearly.",
+    level: 1, category: "pronunciation"
+  },
+  {
+    id: 2, icon: "🎭", cat_fr: "Shadow", cat_en: "Shadow",
+    name_fr: "Shadow Technique — Niveau 1", name_en: "Shadow Technique — Level 1",
+    desc_fr: "Reproduis exactement le rythme et l'intonation d'un grand orateur.",
+    desc_en: "Reproduce exactly the rhythm and intonation of a great speaker.",
+    difficulty: 1, duration_fr: "8 min", duration_en: "8 min",
+    prompt_fr: "Écoute d'abord ce passage, puis répète-le en imitant exactement le rythme, le ton et les pauses : \"Je n'ai pas de talent particulier. Je suis juste passionnément curieux.\" Insiste sur chaque mot important.",
+    prompt_en: "First listen, then repeat imitating the exact rhythm and tone: \"I have no special talent. I am only passionately curious.\" Emphasize each key word.",
+    level: 1, category: "shadow"
+  },
+  {
+    id: 3, icon: "💫", cat_fr: "Éloquence", cat_en: "Eloquence",
+    name_fr: "L'Art de la Pause", name_en: "The Art of the Pause",
+    desc_fr: "Maîtrise les silences stratégiques pour captiver ton audience.",
+    desc_en: "Master strategic silences to captivate your audience.",
+    difficulty: 2, duration_fr: "6 min", duration_en: "6 min",
+    prompt_fr: "Prononce cette phrase en marquant une pause de 2 secondes aux points de suspension : \"La puissance d'un discours... ne vient pas seulement des mots... mais des silences entre eux.\" Répète 3 fois.",
+    prompt_en: "Say this sentence with a 2-second pause at the ellipses: \"The power of a speech... comes not only from the words... but from the silences between them.\" Repeat 3 times.",
+    level: 1, category: "eloquence"
+  },
+  {
+    id: 4, icon: "🎵", cat_fr: "Rythme", cat_en: "Rhythm",
+    name_fr: "Modulation Vocale", name_en: "Vocal Modulation",
+    desc_fr: "Varie le rythme de ta voix pour maintenir l'attention.",
+    desc_en: "Vary your voice rhythm to maintain attention.",
+    difficulty: 2, duration_fr: "7 min", duration_en: "7 min",
+    prompt_fr: "Dis cette phrase LENTEMENT d'abord, puis RAPIDEMENT, puis avec un rythme NORMAL : \"La voix est l'instrument le plus puissant que possède un être humain pour convaincre et toucher les autres.\"",
+    prompt_en: "Say this SLOWLY first, then FAST, then at NORMAL speed: \"The voice is the most powerful instrument a human being possesses to convince and move others.\"",
+    level: 1, category: "rhythm"
+  },
+  {
+    id: 5, icon: "🦁", cat_fr: "Confiance", cat_en: "Confidence",
+    name_fr: "La Posture Vocale", name_en: "Vocal Posture",
+    desc_fr: "Projette une voix forte et assurée depuis le diaphragme.",
+    desc_en: "Project a strong, assured voice from the diaphragm.",
+    difficulty: 2, duration_fr: "5 min", duration_en: "5 min",
+    prompt_fr: "Inspire profondément, puis dis avec une voix forte et assurée, en projetant depuis ton ventre : \"Je suis ici, ma voix porte, mes mots ont du poids, et je mérite d'être entendu.\" Répète 5 fois en augmentant la conviction.",
+    prompt_en: "Breathe deeply, then say with a strong, assured voice, projecting from your core: \"I am here, my voice carries, my words have weight, and I deserve to be heard.\" Repeat 5 times with growing conviction.",
+    level: 1, category: "confidence"
+  },
+  {
+    id: 6, icon: "🌊", cat_fr: "Prononciation", cat_en: "Pronunciation",
+    name_fr: "Vocalises & Résonance", name_en: "Vocalises & Resonance",
+    desc_fr: "Ouvre et détend ta bouche pour une prononciation claire et naturelle.",
+    desc_en: "Open and relax your mouth for clear, natural pronunciation.",
+    difficulty: 1, duration_fr: "4 min", duration_en: "4 min",
+    prompt_fr: "Exécute ces vocalises : Ouvre grand la bouche et dis \"Aaaah\" pendant 3 secondes. Puis \"Oooh\", puis \"Eeee\". Ensuite enchaîne rapidement A-O-E-I-U. Répète 5 fois.",
+    prompt_en: "Do these vocalises: Open your mouth wide and say 'Aaaah' for 3 seconds. Then 'Oooh', then 'Eeee'. Then quickly chain A-O-E-I-U. Repeat 5 times.",
+    level: 1, category: "pronunciation"
+  },
+  {
+    id: 7, icon: "✨", cat_fr: "Éloquence", cat_en: "Eloquence",
+    name_fr: "Storytelling Express", name_en: "Express Storytelling",
+    desc_fr: "Raconte une histoire courte avec émotion, structure et impact.",
+    desc_en: "Tell a short story with emotion, structure and impact.",
+    difficulty: 3, duration_fr: "10 min", duration_en: "10 min",
+    prompt_fr: "Raconte en 60 secondes un moment de ta vie qui t'a transformé. Utilise une structure : Situation → Problème → Action → Résultat. Commence par une phrase forte qui accroche.",
+    prompt_en: "Tell in 60 seconds a moment in your life that transformed you. Use the structure: Situation → Problem → Action → Result. Start with a strong hook sentence.",
+    level: 2, category: "eloquence"
+  },
+  {
+    id: 8, icon: "🎯", cat_fr: "Shadow", cat_en: "Shadow",
+    name_fr: "Shadow — Discours Inspirant", name_en: "Shadow — Inspiring Speech",
+    desc_fr: "Imite un discours mythique pour intégrer ses patterns naturellement.",
+    desc_en: "Imitate a legendary speech to naturally absorb its patterns.",
+    difficulty: 3, duration_fr: "12 min", duration_en: "12 min",
+    prompt_fr: "Reproduis ce passage en imitant chaque nuance : \"Nous choisissons d'aller sur la lune... non pas parce que c'est facile... mais parce que c'est difficile.\" Joue sur la montée en intensité et les pauses dramatiques.",
+    prompt_en: "Reproduce this passage imitating each nuance: \"We choose to go to the Moon... not because it is easy... but because it is hard.\" Play with the rising intensity and dramatic pauses.",
+    level: 2, category: "shadow"
+  }
+];
+
+const ROADMAP = [
+  { icon:"🌱", title_fr:"Niveau 1 — Débutant", title_en:"Level 1 — Beginner", sub_fr:"Bases de la diction & prononciation", sub_en:"Diction & pronunciation basics", status:"current" },
+  { icon:"🔥", title_fr:"Niveau 2 — Initié", title_en:"Level 2 — Initiate", sub_fr:"Rythme, pauses & projection vocale", sub_en:"Rhythm, pauses & vocal projection", status:"locked" },
+  { icon:"💎", title_fr:"Niveau 3 — Éloquent", title_en:"Level 3 — Eloquent", sub_fr:"Storytelling & capture d'attention", sub_en:"Storytelling & attention capture", status:"locked" },
+  { icon:"🦅", title_fr:"Niveau 4 — Orateur", title_en:"Level 4 — Orator", sub_fr:"Improvisation & leadership vocal", sub_en:"Improvisation & vocal leadership", status:"locked" },
+  { icon:"👑", title_fr:"Niveau 5 — Maître", title_en:"Level 5 — Master", sub_fr:"Excellence & impact total", sub_en:"Excellence & total impact", status:"locked" }
+];
+
+const AVAILABLE_LANGUAGES = [
+  { code:'fr', flag:'🇫🇷', name:'Français' },
+  { code:'en', flag:'🇺🇸', name:'English' },
+  { code:'es', flag:'🇪🇸', name:'Español' },
+  { code:'pt', flag:'🇧🇷', name:'Português' },
+  { code:'ar', flag:'🇸🇦', name:'العربية' },
+  { code:'zh', flag:'🇨🇳', name:'中文' },
+  { code:'de', flag:'🇩🇪', name:'Deutsch' },
+  { code:'it', flag:'🇮🇹', name:'Italiano' },
+  { code:'ru', flag:'🇷🇺', name:'Русский' },
+  { code:'ja', flag:'🇯🇵', name:'日本語' },
+  { code:'ko', flag:'🇰🇷', name:'한국어' },
+  { code:'hi', flag:'🇮🇳', name:'हिन्दी' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════════════
+let appState = {
+  lang: 'fr',
+  user: null,
+  xp: 120, level: 1, streak: 3, exDone: 7, avgScore: 72,
+  currentExercise: null,
+  isRecording: false, recInterval: null, recSeconds: 0,
+  filterActive: 'all',
+  notifications: true, sounds: true,
+  practiceLang: 'fr'
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('aura_state');
+    if (saved) Object.assign(appState, JSON.parse(saved));
+  } catch(e) {}
+}
+function saveState() {
+  try { localStorage.setItem('aura_state', JSON.stringify(appState)); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TRANSLATION HELPERS
+// ═══════════════════════════════════════════════════════════════
+function t(key) {
+  const lang = LANGS[appState.lang] || LANGS['fr'];
+  return lang[key] || LANGS['fr'][key] || key;
+}
+function applyTranslations() {
+  const l = appState.lang;
+  // Auth
+  safeHtml('auth-welcome', t('auth_welcome'));
+  safeHtml('auth-sub', t('auth_sub'));
+  safeText('lbl-name', t('lbl_name'));
+  safeText('lbl-email', t('lbl_email'));
+  safeText('lbl-pw', t('lbl_pw'));
+  safeText('btn-signup', t('btn_signup'));
+  safeText('auth-or', t('auth_or'));
+  safeText('btn-signin', t('btn_signin'));
+  // Home
+  const nameEl = document.getElementById('user-name-home');
+  const greetEl = document.getElementById('home-greeting');
+  if (greetEl) greetEl.childNodes[0].textContent = t('home_greeting') + ' ';
+  safeText('home-sub', t('home_sub'));
+  safeText('level-label', t('level_label'));
+  safeText('xp-label-txt', t('xp_label'));
+  safeText('lbl-streak', t('streak_days'));
+  safeText('lbl-ex-done', t('ex_done'));
+  safeText('lbl-avg', t('avg_score'));
+  safeHtml('home-today-title', t('today_title'));
+  // Exercise session
+  safeText('lbl-instructions', t('lbl_instructions'));
+  safeText('lbl-listen-btn', t('lbl_listen_btn'));
+  safeText('lbl-next-btn', t('next_btn'));
+  safeText('mic-status', t('tap_to_speak'));
+  // Catalog
+  safeText('catalog-title', t('catalog_title'));
+  // Progress
+  safeText('prog-title', t('prog_title'));
+  safeHtml('roadmap-title', t('roadmap_title'));
+  safeText('prog-xp-lbl', t('prog_xp_lbl'));
+  safeText('lbl-total-ex', t('lbl_total_ex'));
+  safeText('lbl-streak-stat', t('lbl_streak_stat'));
+  safeText('lbl-avg-stat', t('lbl_avg_stat'));
+  safeText('lbl-time-stat', t('lbl_time_stat'));
+  // Profile
+  safeText('prof-title', t('prof_title'));
+  safeText('lbl-settings', t('lbl_settings'));
+  safeText('btn-logout', t('btn_logout'));
+  safeText('prof-level-title', t('prof_level_title'));
+  // Lang modal
+  safeText('lbl-lang-modal-title', t('lang_modal_title'));
+  safeText('btn-save-lang', t('btn_save_lang'));
+  // Nav
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const k = el.getAttribute('data-key');
+    if (t(k)) el.textContent = t(k);
+  });
+  safeText('cur-lang-label', appState.lang.toUpperCase());
+  renderFilters();
+  renderRoadmap();
+  renderSettings();
+}
+
+function safeText(id, val) { const el = document.getElementById(id); if (el && val) el.textContent = val; }
+function safeHtml(id, val) { const el = document.getElementById(id); if (el && val) el.innerHTML = val; }
+
+function setAppLang(lang, btn) {
+  appState.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyTranslations();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════════
+let isSigninMode = false;
+
+function doSignup() {
+  const name = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  const pw = document.getElementById('inp-pw').value;
+  if (!name) { showToast('⚠️ Entre ton prénom'); return; }
+  if (!email) { showToast('⚠️ Entre ton email'); return; }
+  appState.user = { name, email };
+  saveState();
+  enterApp();
+}
+
+function switchToSignin() {
+  isSigninMode = !isSigninMode;
+  const pwGroup = document.getElementById('pw-group');
+  const nameGroup = document.getElementById('inp-name').closest('.input-group');
+  if (isSigninMode) {
+    pwGroup.style.display = 'none';
+    nameGroup.style.display = 'none';
+    safeText('btn-signup', t('lbl_email') ? 'Connexion ✦' : 'Sign In ✦');
+    safeText('btn-signin', appState.lang === 'en' ? 'Create new account' : 'Créer un compte');
+    document.getElementById('btn-signup').onclick = doLogin;
+  } else {
+    pwGroup.style.display = '';
+    nameGroup.style.display = '';
+    safeText('btn-signup', t('btn_signup'));
+    safeText('btn-signin', t('btn_signin'));
+    document.getElementById('btn-signup').onclick = doSignup;
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('inp-email').value.trim();
+  if (!email) { showToast('⚠️ Entre ton email'); return; }
+  appState.user = { name: 'Champion', email };
+  saveState();
+  enterApp();
+}
+
+function enterApp() {
+  showScreen('home');
+  document.getElementById('bottom-nav').style.display = 'flex';
+  updateHomeUI();
+  renderDailyList();
+  renderExercisesCatalog();
+  renderProgressScreen();
+  renderProfileScreen();
+  applyTranslations();
+}
+
+function doLogout() {
+  appState.user = null; saveState();
+  document.getElementById('bottom-nav').style.display = 'none';
+  showScreen('auth');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function switchScreen(id, btn) {
+  if (id === 'exercise') return;
+  showScreen(id);
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+function goBack() {
+  stopRecording();
+  showScreen('home');
+  document.querySelectorAll('.nav-item').forEach((n,i) => { n.classList.toggle('active', i===0); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HOME UI
+// ═══════════════════════════════════════════════════════════════
+function updateHomeUI() {
+  const name = appState.user?.name || 'Champion';
+  const nameEl = document.getElementById('user-name-home');
+  if (nameEl) nameEl.textContent = name;
+  const av = document.getElementById('home-avatar');
+  if (av) av.textContent = name[0].toUpperCase();
+  const profAv = document.getElementById('prof-avatar');
+  if (profAv) profAv.textContent = name[0].toUpperCase();
+  const profName = document.getElementById('prof-name');
+  if (profName) profName.textContent = name;
+  document.getElementById('streak-days').textContent = appState.streak;
+  document.getElementById('ex-done-count').textContent = appState.exDone;
+  document.getElementById('avg-score').textContent = appState.avgScore + '%';
+  const xpPct = Math.min(100, Math.round((appState.xp / 500) * 100));
+  document.getElementById('xp-fill').style.width = xpPct + '%';
+  document.getElementById('xp-val').textContent = appState.xp + ' / 500 XP';
+}
+
+function renderDailyList() {
+  const list = document.getElementById('daily-list');
+  const daily = EXERCISES.slice(0, 4);
+  list.innerHTML = daily.map((ex, i) => {
+    const done = i < 2;
+    const name = appState.lang === 'en' ? ex.name_en : ex.name_fr;
+    const desc = appState.lang === 'en' ? ex.desc_en : ex.desc_fr;
+    const badge = done
+      ? `<span class="ex-badge done">✓ ${appState.lang==='en'?'Done':'Fait'}</span>`
+      : `<span class="ex-badge new">${appState.lang==='en'?'New':'Nouveau'}</span>`;
+    return `
+      <div class="exercise-item" onclick="startExercise(${ex.id})">
+        <div class="ex-icon">${ex.icon}</div>
+        <div class="ex-info">
+          <div class="ex-name">${name}</div>
+          <div class="ex-desc">${desc}</div>
+        </div>
+        ${badge}
+        <div class="ex-arrow">›</div>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXERCISE SESSION
+// ═══════════════════════════════════════════════════════════════
+function startExercise(id) {
+  const ex = EXERCISES.find(e => e.id === id);
+  if (!ex) return;
+  appState.currentExercise = ex;
+  const name = appState.lang === 'en' ? ex.name_en : ex.name_fr;
+  const prompt = appState.lang === 'en' ? ex.prompt_en : ex.prompt_fr;
+  document.getElementById('ex-session-title').textContent = name;
+  document.getElementById('ex-prompt-text').textContent = prompt;
+  document.getElementById('feedback-card').classList.remove('visible');
+  document.getElementById('btn-next-wrap').style.display = 'none';
+  document.getElementById('mic-timer').textContent = '0:00';
+  document.getElementById('mic-status').textContent = t('tap_to_speak');
+  resetWave();
+  showScreen('exercise');
+}
+
+function listenInstructions() {
+  const ex = appState.currentExercise; if (!ex) return;
+  const text = appState.lang === 'en' ? ex.prompt_en : ex.prompt_fr;
+  const langCode = appState.lang === 'en' ? 'en-US' : 'fr-FR';
+  speakText(text, langCode);
+  showToast(appState.lang === 'en' ? '🔊 Reading instructions...' : '🔊 Lecture en cours...');
+}
+
+function speakText(text, langCode) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = langCode || 'fr-FR';
+    utt.rate = 0.9; utt.pitch = 1; utt.volume = 1;
+    window.speechSynthesis.speak(utt);
+  } else {
+    showToast(appState.lang==='en' ? '⚠️ Speech not supported on this browser' : '⚠️ Synthèse vocale non supportée');
+  }
+}
+
+let recStream = null;
+
+async function toggleRecording() {
+  if (appState.isRecording) { stopRecording(); return; }
+  try {
+    recStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    startRecording();
+  } catch(e) {
+    // Fallback without real mic
+    startRecording();
+  }
+}
+
+function startRecording() {
+  appState.isRecording = true;
+  appState.recSeconds = 0;
+  document.getElementById('mic-btn').classList.add('recording');
+  document.getElementById('mic-status').textContent = t('stop_rec');
+  document.getElementById('mic-btn').textContent = '⏹️';
+  document.getElementById('feedback-card').classList.remove('visible');
+  document.getElementById('btn-next-wrap').style.display = 'none';
+  startWave();
+  appState.recInterval = setInterval(() => {
+    appState.recSeconds++;
+    const m = Math.floor(appState.recSeconds/60);
+    const s = (appState.recSeconds%60).toString().padStart(2,'0');
+    document.getElementById('mic-timer').textContent = m + ':' + s;
+    if (appState.recSeconds >= 120) stopRecording();
+  }, 1000);
+}
+
+function stopRecording() {
+  if (!appState.isRecording) return;
+  appState.isRecording = false;
+  if (appState.recInterval) { clearInterval(appState.recInterval); appState.recInterval = null; }
+  if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+  document.getElementById('mic-btn').classList.remove('recording');
+  document.getElementById('mic-btn').textContent = '🎙️';
+  document.getElementById('mic-status').textContent = t('tap_to_speak');
+  stopWave();
+  if (appState.recSeconds > 1) analyzeSpeech();
+}
+
+function analyzeSpeech() {
+  document.getElementById('feedback-card').classList.add('visible');
+  document.getElementById('feedback-title').textContent = t('analyzing');
+  document.getElementById('feedback-score-val').textContent = '...';
+  document.getElementById('feedback-intro').textContent = '';
+  document.getElementById('feedback-tips').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('btn-next-wrap').style.display = 'none';
+  const dur = appState.recSeconds;
+  const ex = appState.currentExercise;
+  const prompt = ex ? (appState.lang==='en' ? ex.prompt_en : ex.prompt_fr) : '';
+  const lang = appState.lang;
+  const apiPrompt = lang === 'en'
+    ? `You are an expert public speaking coach for the app "Aura by Chosen". The student did this exercise for ${dur} seconds: "${prompt}". Give a motivating score from 60 to 95, a short congratulatory title (max 8 words), a 2-sentence encouragement, and 3 specific improvement tips. Reply ONLY in JSON: {"score":85,"title":"Great vocal presence!","intro":"...","tips":["tip1","tip2","tip3"]}`
+    : `Tu es un coach expert en art oratoire pour l'app "Aura by Chosen". L'élève vient de faire cet exercice pendant ${dur} secondes : "${prompt}". Donne un score motivant de 60 à 95, un titre court et encourageant (max 8 mots), 2 phrases d'encouragement et 3 conseils d'amélioration précis. Réponds UNIQUEMENT en JSON : {"score":85,"title":"Belle présence vocale !","intro":"...","tips":["conseil1","conseil2","conseil3"]}`;
+
+  fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 500,
+      messages: [{ role: "user", content: apiPrompt }]
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    const raw = (data.content||[]).map(b=>b.text||'').join('');
+    const clean = raw.replace(/```json|```/g,'').trim();
+    let res;
+    try { res = JSON.parse(clean); } catch(e) {
+      res = lang==='en'
+        ? { score:78, title:"Good effort!", intro:"You showed great courage by practicing. Keep going!", tips:["Slow down slightly for more impact","Project your voice more confidently","Emphasize key words with pauses"] }
+        : { score:78, title:"Bel effort !", intro:"Tu as fait preuve de courage en pratiquant. Continue !", tips:["Ralentis légèrement pour plus d'impact","Projette ta voix avec plus d'assurance","Insiste sur les mots clés avec des pauses"] };
+    }
+    showFeedback(res);
+    const xpGain = Math.floor(res.score / 5);
+    appState.xp += xpGain; appState.exDone++;
+    const newAvg = Math.round((appState.avgScore * (appState.exDone-1) + res.score) / appState.exDone);
+    appState.avgScore = newAvg;
+    saveState(); updateHomeUI();
+    showToast('✦ +' + xpGain + ' XP');
+    if (appState.sounds) speakText(res.intro, lang==='en'?'en-US':'fr-FR');
+  })
+  .catch(() => {
+    const fallback = lang==='en'
+      ? { score:75, title:"Well done, keep going!", intro:"Every practice session builds your skill. You're on the right path!", tips:["Focus on breathing before each sentence","Slow down on important words","Project your voice with confidence"] }
+      : { score:75, title:"Bien joué, continue !", intro:"Chaque séance renforce tes compétences. Tu es sur la bonne voie !", tips:["Concentre-toi sur ta respiration avant chaque phrase","Ralentis sur les mots importants","Projette ta voix avec confiance"] };
+    showFeedback(fallback);
+  });
+}
+
+function showFeedback(res) {
+  document.getElementById('feedback-score-val').textContent = res.score + '%';
+  document.getElementById('feedback-title').textContent = res.title;
+  document.getElementById('feedback-intro').textContent = res.intro;
+  document.getElementById('feedback-tips').innerHTML = (res.tips||[]).map(t =>
+    `<div class="tip-item">${t}</div>`
+  ).join('');
+  document.getElementById('btn-next-wrap').style.display = 'block';
+}
+
+function nextExercise() {
+  const exList = EXERCISES.filter(e => e.level <= appState.level);
+  const cur = appState.currentExercise;
+  const idx = exList.findIndex(e => e.id === cur?.id);
+  const next = exList[(idx + 1) % exList.length];
+  startExercise(next.id);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WAVE ANIMATION
+// ═══════════════════════════════════════════════════════════════
+function startWave() {
+  document.querySelectorAll('.wave-bar').forEach((b,i) => {
+    b.classList.add('active');
+    b.style.animationDelay = (i * 0.07) + 's';
+    b.style.height = (6 + Math.random()*30) + 'px';
+  });
+  waveInterval = setInterval(() => {
+    document.querySelectorAll('.wave-bar').forEach(b => {
+      b.style.height = (6 + Math.random()*38) + 'px';
+    });
+  }, 150);
+}
+let waveInterval = null;
+function stopWave() {
+  if (waveInterval) { clearInterval(waveInterval); waveInterval = null; }
+  resetWave();
+}
+function resetWave() {
+  document.querySelectorAll('.wave-bar').forEach(b => {
+    b.classList.remove('active'); b.style.height = '6px';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXERCISES CATALOG
+// ═══════════════════════════════════════════════════════════════
+function renderFilters() {
+  const row = document.getElementById('filter-row'); if (!row) return;
+  const filters = t('filters') || ["Tous","Prononciation","Éloquence","Shadow","Rythme","Confiance"];
+  const cats = ['all','pronunciation','eloquence','shadow','rhythm','confidence'];
+  row.innerHTML = filters.map((f,i) => `
+    <button class="filter-chip ${appState.filterActive===cats[i]?'active':''}"
+      onclick="setFilter('${cats[i]}',this)">${f}</button>
+  `).join('');
+}
+
+function setFilter(cat, btn) {
+  appState.filterActive = cat;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderExercisesCatalog();
+}
+
+function renderExercisesCatalog() {
+  renderFilters();
+  const grid = document.getElementById('ex-grid'); if (!grid) return;
+  const filtered = appState.filterActive === 'all'
+    ? EXERCISES
+    : EXERCISES.filter(e => e.category === appState.filterActive);
+  const lang = appState.lang;
+  grid.innerHTML = filtered.map(ex => {
+    const name = lang==='en' ? ex.name_en : ex.name_fr;
+    const cat = lang==='en' ? ex.cat_en : ex.cat_fr;
+    const desc = lang==='en' ? ex.desc_en : ex.desc_fr;
+    const dur = lang==='en' ? ex.duration_en : ex.duration_fr;
+    const dots = [1,2,3].map(d => `<div class="dot ${d<=ex.difficulty?'filled':''}"></div>`).join('');
+    const locked = ex.level > appState.level + 1;
+    return `<div class="ex-card ${locked?'locked':''}" onclick="${locked?'showToast(\'🔒 Débloque les niveaux précédents\')':'startExercise('+ex.id+')'}">
+      <div class="ex-card-top">
+        <div class="ex-card-icon">${ex.icon}</div>
+        <div><div class="ex-card-title">${name}</div><div class="ex-card-cat">${cat}</div></div>
+      </div>
+      <div class="ex-card-desc">${desc}</div>
+      <div class="ex-card-footer">
+        <div class="difficulty-dots">${dots}</div>
+        <div class="duration-tag">⏱ ${dur} ${locked?'🔒':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROGRESS SCREEN
+// ═══════════════════════════════════════════════════════════════
+function renderProgressScreen() {
+  renderRoadmap();
+  const prog = document.getElementById('prog-level-name');
+  if (prog) prog.textContent = appState.lang==='en' ? 'BEGINNER' : 'DÉBUTANT';
+}
+
+function renderRoadmap() {
+  const list = document.getElementById('roadmap-list'); if (!list) return;
+  const lang = appState.lang;
+  list.innerHTML = ROADMAP.map((r, i) => {
+    const title = lang==='en' ? r.title_en : r.title_fr;
+    const sub = lang==='en' ? r.sub_en : r.sub_fr;
+    const cls = r.status === 'done' ? 'done' : r.status === 'current' ? 'current' : '';
+    return `<div class="roadmap-item">
+      <div class="roadmap-dot ${cls}">${r.icon}</div>
+      <div class="roadmap-info">
+        <div class="roadmap-title">${title}</div>
+        <div class="roadmap-sub">${sub}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROFILE / SETTINGS
+// ═══════════════════════════════════════════════════════════════
+function renderProfileScreen() {
+  renderSettings();
+  const name = appState.user?.name || 'Champion';
+  const av = document.getElementById('prof-avatar');
+  if (av) av.textContent = name[0].toUpperCase();
+  const pn = document.getElementById('prof-name');
+  if (pn) pn.textContent = name;
+}
+
+function renderSettings() {
+  const list = document.getElementById('settings-list'); if (!list) return;
+  const lang = appState.lang;
+  const items = [
+    { icon:'🌍', label_fr:'Langue de l\'interface', label_en:'App language', value: lang.toUpperCase(), action:"showLangModal()" },
+    { icon:'🗣️', label_fr:'Langue de pratique', label_en:'Practice language', value: appState.practiceLang.toUpperCase(), action:"showPracticeLangModal()" },
+    { icon:'🔔', label_fr:'Notifications', label_en:'Notifications', isToggle:true, toggleKey:'notifications' },
+    { icon:'🔊', label_fr:'Sons & Synthèse vocale', label_en:'Sounds & Voice', isToggle:true, toggleKey:'sounds' },
+    { icon:'🏆', label_fr:'Mes badges', label_en:'My badges', value:'3 🏅', action:"showToast('Bientôt disponible !')" },
+  ];
+  list.innerHTML = items.map(item => {
+    const label = lang==='en' ? item.label_en : item.label_fr;
+    if (item.isToggle) {
+      const on = appState[item.toggleKey];
+      return `<div class="setting-item">
+        <div class="setting-left"><span class="setting-icon">${item.icon}</span><span class="setting-label">${label}</span></div>
+        <div class="toggle ${on?'on':''}" onclick="toggleSetting('${item.toggleKey}',this)"></div>
+      </div>`;
+    }
+    return `<div class="setting-item" onclick="${item.action||''}">
+      <div class="setting-left"><span class="setting-icon">${item.icon}</span><span class="setting-label">${label}</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="setting-value">${item.value||''}</span><span class="setting-arrow">›</span></div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSetting(key, el) {
+  appState[key] = !appState[key];
+  el.classList.toggle('on', appState[key]);
+  saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LANGUAGE MODAL
+// ═══════════════════════════════════════════════════════════════
+function showLangModal() {
+  const grid = document.getElementById('lang-grid');
+  grid.innerHTML = AVAILABLE_LANGUAGES.map(l => `
+    <div class="lang-option ${appState.lang===l.code?'selected':''}" onclick="selectLang('${l.code}',this)">
+      <span class="flag">${l.flag}</span>${l.name}
+    </div>
+  `).join('');
+  document.getElementById('lang-modal').classList.add('visible');
+}
+
+function selectLang(code, el) {
+  document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  appState.lang = (code === 'fr' || code === 'en') ? code : 'fr';
+  // Store original for practice
+  appState.practiceLang = code;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const matchBtn = [...document.querySelectorAll('.lang-btn')].find(b => b.getAttribute('onclick')?.includes(`'${appState.lang}'`));
+  if (matchBtn) matchBtn.classList.add('active');
+  applyTranslations();
+}
+
+function closeLangModal() {
+  document.getElementById('lang-modal').classList.remove('visible');
+  updateHomeUI();
+  renderDailyList();
+  renderExercisesCatalog();
+  renderProfileScreen();
+  saveState();
+  showToast(t('toast_saved'));
+}
+
+function showPracticeLangModal() { showLangModal(); }
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+let toastTimeout;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  applyTranslations();
+  // Splash → Auth
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    if (appState.user) {
+      enterApp();
+    } else {
+      showScreen('auth');
+    }
+  }, 2200);
+});
+</script>
+</body>
+</html>
